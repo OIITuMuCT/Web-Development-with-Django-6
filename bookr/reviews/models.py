@@ -33,7 +33,7 @@ class Book(models.Model):
     )
 
     def __str__(self):
-        return self.title
+        return f"{self.title} ({self.isbn})"
 
 class Contributor(models.Model):
     """ A contributor to a Book, e.g. author, editor, co-author. """
@@ -68,6 +68,9 @@ class BookContributor(models.Model):
         verbose_name="The role this contributor had in the book.",
         choices=ContributionRole.choices, max_length=20
     )
+
+    def __str__(self):
+        return f"{self.book.title}: {self.contributor.first_names} {self.contributor.last_names}"
 
 class Review(models.Model):
     content = models.TextField(
