@@ -1,6 +1,6 @@
 from django.shortcuts import render
-
-from .forms import ExampleForm, ExampleChoiceForm
+from django.core.exceptions import ValidationError
+from .forms import ExampleForm, ExampleChoiceForm, OrderForm
 
 # Create your views here.
 def home_page(request):
@@ -33,3 +33,26 @@ def form_example_template(request):
     else:
         form = ExampleForm()
     return render(request, 'form_example/form_template.html', {"form": form})
+
+
+def validate_email_domain(value):
+    if value.split("@")[-1].lower() != "example.com":
+        raise ValidationError("The email address " "must be on the domain example.com.")
+
+
+def order_form_example(request):
+    # method = request.POST
+    if request.method == "POST":
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            for name in request.POST:
+                print(f"{name}: {request.POST.getlist(name)}")
+            for name, value in form.cleaned_data.items():
+                print(f"{name}: ({type(value)} {value})")
+    else:
+        form = OrderForm()
+    return render(
+        request,
+        "form_example/order_form_example.html",
+        {"form": form, "method": request.method},
+    )
