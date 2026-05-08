@@ -23,7 +23,7 @@ from form_example import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("form-example/", views.form_example, name='form-example'),
+    path("form-example/", views.form_example, name='form_example'),
     path("", include("form_example.urls")),
 
 ]
