@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.core.exceptions import ValidationError
-from .forms import ExampleForm, ExampleChoiceForm, OrderForm
+from .forms import ExampleForm, ExampleChoiceForm, OrderForm, ExampleFormField, FormTest, PublisherForm
 
 # Create your views here.
 def home_page(request):
@@ -42,17 +42,57 @@ def validate_email_domain(value):
 
 def order_form_example(request):
     # method = request.POST
+    initial = {"email": "user@example.com"}
     if request.method == "POST":
-        form = OrderForm(request.POST)
+        form = OrderForm(request.POST, initial=initial)
         if form.is_valid():
             for name in request.POST:
                 print(f"{name}: {request.POST.getlist(name)}")
             for name, value in form.cleaned_data.items():
                 print(f"{name}: ({type(value)} {value})")
     else:
-        form = OrderForm()
+        form = OrderForm(initial=initial)
     return render(
         request,
         "form_example/order_form_example.html",
         {"form": form, "method": request.method},
     )
+
+def form_example_field(request):
+    if request.method == "POST":
+        form = ExampleFormField(request.POST)
+        if form.is_valid():
+            print(f"Form name: '{form_example_field.__name__}'")
+            for name in request.POST:
+                if name != 'csrfmiddlewaretoken':
+                    print(f"\t{name}: {request.POST.getlist(name)}")
+            print("Game over\n")
+        print(request.POST)
+    else:
+        form = ExampleFormField()
+    
+    return render(request, "form_example/form_example_field.html",
+                  {"form": form, "method": request.method, "hello": "Kto tam?"})
+
+def form_test(request):
+    if request.method =="POST":
+        form = FormTest(request.POST)
+        if form.is_valid():
+            for name in request.POST:
+                print(f"{name}: {request.POST.getlist(name)}")
+    else:
+        form = FormTest()
+    return render(request, "form_example/form_test.html", {"form": form})
+
+def form_publisher(request):
+    form = PublisherForm()
+    if request.method == "POST":
+        form = PublisherForm(request.POST)
+        if form.is_valid():
+            form.save()
+            print("save success")
+            for obj  in request.POST:
+                print(f"{obj} {request.POST.getlist(obj)}")
+    else:
+        form = PublisherForm()
+    return render(request, "form_example/publisher_form.html", {"form": form})
