@@ -1,17 +1,59 @@
 <!doctype html>
 {% load static %}
+{% comment %} {% block brand %} <img src="{% static "/static/reviews/logo.png" %}"> {% endblock %} {% endcomment %}
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Bootstrap CSS --> 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    <title>{% block title %}Hello World{% endblock title %}</title>
+    <title>{% block title %}Book Review{% endblock title %}</title>
+        <style type="text/css">
+      .navbar {
+        min-height: 100px;
+        font-size: 25px;
+      }
+      .navbar-brand {
+        font-size: 25px;
+      }
+
+      .navbar-brand > img {
+         height: 60px;
+       }
+    </style>
   </head>
   <body>
-    
+            <nav class="navbar navbar-expand-sm navbar-dark bg-dark sticky-top">
+          <a class="navbar-brand" href="/">{% block brand %}Book Review{% endblock %}</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item active">
+                <a class="nav-link" href="/books/">Home <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Logout</a>
+              </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+              <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+          </div>
+        </nav>
     {% block content %}
     <h1>Hello World using Django templates!</h1>
     {% endblock %}
+      <!-- Copyright -->
+  <footer class="page-footer font-small blue">
+    <div class="footer-copyright text-center py-3">&copy; 2025 Copyright:
+      <a href="https://www.packtpub.com"> Packt Publications</a>
+      <p>Website by: Packt Publications</p>
+      <p>Contact information: <a href="mailto:email@example.com">email@example.com</a></p>
+    </div>
+  </footer>
+  <!-- Copyright -->
   </body>
 </html>
