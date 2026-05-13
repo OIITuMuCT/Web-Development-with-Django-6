@@ -24,9 +24,18 @@
   </head>
   <body>
     {% include "navbar.html" %}
+<div class="container-fluid">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.level_tag == 'error' %}danger{% else %}{{ message.level_tag }}{% endif %}" 
+      role="alert">
+      {{ message }}
+    </div>
+    {% endfor %}
     {% block content %}
-    <h1>Hello World using Django templates!</h1>
+    <h1>Welcome to Bookr!</h1>
     {% endblock %}
     {% include "footer.html" %}
+</div>
+
   </body>
 </html>
