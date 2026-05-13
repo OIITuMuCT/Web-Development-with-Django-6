@@ -1,0 +1,31 @@
+.
+├── appStructure.txt
+├── db.sqlite3
+├── employee_project
+│   ├── appStructure.txt
+│   ├── asgi.py
+│   ├── __init__.py
+│   ├── mystructure.txt
+│   ├── __pycache__
+│   │   ├── __init__.cpython-312.pyc
+│   │   ├── settings.cpython-312.pyc
+│   │   ├── urls.cpython-312.pyc
+│   │   └── wsgi.cpython-312.pyc
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── employee_register
+│   ├── admin.py
+│   ├── apps.py
+│   ├── __init__.py
+│   ├── migrations
+│   │   └── __init__.py
+│   ├── models.py
+│   ├── tests.py
+│   └── views.py
+├── manage.py
+├── mystructure.txt
+├── my_tree.txt
+└── my.txt
+
+5 directories, 24 files
