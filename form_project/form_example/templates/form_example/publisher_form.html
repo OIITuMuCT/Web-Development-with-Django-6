@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Publisher Form{% endblock %}
+
+{% block content %}
+<form action="" method="POST">
+    {{ form.as_p}}
+    {% csrf_token %}
+    <input type="submit" value="submit">
+    {% comment %} <button type="submit">Submit</button> {% endcomment %}
+</form>
+
+{% endblock %}

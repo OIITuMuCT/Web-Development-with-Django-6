@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Form example template{% endblock %}
+{% block content %}
+<form action="" method="POST">
+  {% csrf_token %}
+    <table>
+        {{form.field.text_input.as_field_group}}
+        {{form.field.password_input.as_field_group}}
+        {{form.as_p}}
+    </table>
+        
+    <p><input type="submit" name="submit_input" value="Submit Input" /></p>
+    <p>
+      <button type="submit" name="button_element" value="Button Element">
+        Button With <strong>Styled</strong> Text
+      </button>
+    </p>
+    <input type="hidden" name="hidden_input" value="Hidden Value" />
+</form>
+
+{% endblock %}

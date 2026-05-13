@@ -1,6 +1,8 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import Http404
-from .models import Book
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+
+from .models import Book, Contributor, Publisher
+from .forms import PublisherForm
 from .utils import average_rating
 
 
@@ -51,3 +53,32 @@ def book_detail(request, pk):
     else:
         context = {"book": book, "book_rating": None, "reviews": None}
     return render(request, "reviews/book_detail.html", context)
+
+def publisher_edit(request, pk=None):
+    if pk is not None:
+        publisher = get_object_or_404(Publisher, pk=pk)
+    else:
+        publisher = None
+    if request.method == "POST":
+        form = PublisherForm(request.POST, instance=publisher)
+        if form.is_valid():
+            updated_publisher = form.save()
+            if publisher is None:
+                messages.success(request,
+                                 f'Publisher "{updated_publisher}" 'f'was created.')
+            else:
+                form = PublisherForm(instance=publisher)
+                messages.success(request, f'Publisher "{updated_publisher}" 'f'was updated.')
+                return redirect("publisher_edit", updated_publisher.pk)
+    else:
+        form = PublisherForm(instance=publisher)
+    return render(
+        request, 
+        "reviews/instance_form.html", 
+        {
+            "method":request.method, 
+            "form": form,
+            "model_type": "Publisher",
+            "instance": publisher,
+        }
+    )

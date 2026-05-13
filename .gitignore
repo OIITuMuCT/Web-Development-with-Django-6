@@ -1,3 +1,6 @@
 .python-version
 __pycache__/
 bookr/__pycache__
+/business_site/
+/juggler/
+.vscode/
