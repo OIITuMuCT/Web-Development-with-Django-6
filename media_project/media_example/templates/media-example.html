@@ -1,9 +1,13 @@
 <body>
 <a href="{{ MEDIA_URL }}test.txt">Test Text File</a>
+
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Submit</button>
+    {% if instance %}
+    <img src="{{ instance.image_field.url }}">
+{% endif %}
 </form>
 
 </body>
