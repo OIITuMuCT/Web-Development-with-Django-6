@@ -1,6 +1,7 @@
 from django.shortcuts import render
+from django.conf import settings
 from django.core.exceptions import ValidationError
-from .forms import ExampleForm, ExampleChoiceForm, OrderForm, ExampleFormField, FormTest, PublisherForm
+from .forms import ExampleForm, ExampleChoiceForm, OrderForm, ExampleFormField, FormTest, PublisherForm, UploadForm
 
 # Create your views here.
 def home_page(request):
@@ -96,3 +97,16 @@ def form_publisher(request):
     else:
         form = PublisherForm()
     return render(request, "form_example/publisher_form.html", {"form": form})
+
+def form_upload(request):
+    if request.method == "POST":
+        form = UploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            save_path = settings.MEDIA_ROOT / form.cleaned_data['file_upload'].name
+            
+            with open(save_path, "wb") as output_file:
+                for chunk in form.cleaned_data['file_upload'].chunks():
+                    output_file.write(chunk)
+    else:
+        form = UploadForm()
+    return render(request, "form_example/form_upload.html", {"form": form})

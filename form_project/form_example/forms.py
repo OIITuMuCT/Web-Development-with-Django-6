@@ -114,3 +114,6 @@ class PublisherForm(forms.ModelForm):
                 attrs={"placeholder": "Your company website address"}
             )
         }
+
+class UploadForm(forms.Form):
+    file_upload = forms.FileField()

@@ -9,4 +9,5 @@ urlpatterns = [
     path("form-example-field/", views.form_example_field, name="form_example_field"),
     path("form-test/", views.form_test, name="form_test"),
     path('form-publisher/', views.form_publisher, name="form_publisher"),
+    path("form-upload/", views.form_upload, name="form_upload"),
 ]
