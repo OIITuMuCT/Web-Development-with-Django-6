@@ -13,10 +13,15 @@ def media_example(request):
         instance = None
         form = UploadForm(request.POST, request.FILES)
         if form.is_valid():
-            instance = ExampleModel()
-            instance.image_field = form.cleaned_data['image_upload']
-            instance.file_field = form.cleaned_data['file_upload']
-            instance.save()
+            instance = form.save()
     else:
         form = UploadForm()
-    return render(request, "media-example.html", {"form": form, "instance": instance}, )
+    return render(request, "media-example.html", {"form": form, "instance": instance})
+
+def update_view(request, pk):
+    if request.method == "POST":
+        instance = ExampleModel.objects.get(pk=pk)
+        form = UploadForm(request.POST, request.FILES, instance=instance)
+        if form.is_valid():
+            form.save()
+
