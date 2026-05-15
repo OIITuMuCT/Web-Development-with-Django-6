@@ -1,7 +1,17 @@
+# Стандартная библиотека Python
+
+# Сторонние библиотеки ( включая Django и DRF)
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import (
+            login_required,
+            permission_required,
+            user_passes_test
+)
 from django.utils import timezone
 
+# Локальные модули проекта
 from .models import Book, Contributor, Publisher, Review
 from .forms import PublisherForm, ReviewForm
 from .utils import average_rating
@@ -55,6 +65,7 @@ def book_detail(request, pk):
         context = {"book": book, "book_rating": None, "reviews": None}
     return render(request, "reviews/book_detail.html", context)
 
+@permission_required('edit_publisher')
 def publisher_edit(request, pk=None):
     if pk is not None:
         publisher = get_object_or_404(Publisher, pk=pk)
@@ -84,11 +95,16 @@ def publisher_edit(request, pk=None):
         }
     )
 
+
+@login_required
 def review_edit(request, book_pk, review_pk=None):
     book = get_object_or_404(Book, pk=book_pk)
 
     if review_pk is not None:
         review = get_object_or_404(Review, book_id=book_pk, pk=review_pk)
+        user = request.user
+        if (not user.is_staff and review.creator.id != user.id):
+            raise PermissionDenied
     else:
         review = None
     
