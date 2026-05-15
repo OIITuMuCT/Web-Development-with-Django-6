@@ -17,6 +17,7 @@ Including another URLconf
 
 from django.contrib import admin, auth
 from django.urls import include, path
+from authentication.views import profile
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -33,5 +34,6 @@ urlpatterns = [
         auth.views.PasswordResetCompleteView.as_view(),
         name="password_reset_complete",
     ),
+    path("accounts/profile/", profile, name="profile"),
     path("", include("authentication.urls")),
 ]
