@@ -39,7 +39,7 @@ urlpatterns = [
     path("accounts/profile/", profile, name="profile"),
     path("", reviews.views.index),
     path("", include("reviews.urls")),
-    path("book-search/", reviews.views.book_search, name="book-search"),
+    path("book-search/", reviews.views.book_search, name="book_search"),
 ]
 
 if settings.DEBUG:
