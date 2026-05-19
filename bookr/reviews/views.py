@@ -13,7 +13,7 @@ from django.utils import timezone
 
 # Локальные модули проекта
 from .models import Book, Contributor, Publisher, Review
-from .forms import PublisherForm, ReviewForm
+from .forms import PublisherForm, ReviewForm, SearchForm
 from .utils import average_rating
 
 
@@ -25,7 +25,36 @@ def index(request):
 
 def book_search(request):
     search_text = request.GET.get("search", "")
-    return render(request, "search-results.html", {"search_text": search_text})
+    form = SearchForm(request.GET)
+    books = set()
+
+    if form.is_valid() and form.cleaned_data["search"]:
+        search = form.cleaned_data["search"]
+        search_in = form.cleaned_data.get("search_in") or "title"
+        if search_in == "title":
+            books = Book.objects.filter(title__icontains=search)
+        else:
+            fname_contributors = Contributor.objects.filter(
+                first_names__icontains=search
+            )
+
+            for contributor in fname_contributors:
+                for book in contributor.book_set.all():
+                    books.add(book)
+
+            lname_contributors = Contributor.objects.filter(
+                last_names__icontains=search
+            )
+
+            for contributor in lname_contributors:
+                for book in contributor.book_set.all():
+                    books.add(book)
+
+    return render(
+        request,
+        "reviews/search-results.html",
+        {"form": form, "search_text": search_text, "books": books},
+    )
 
 
 def home(request):
@@ -63,9 +92,24 @@ def book_detail(request, pk):
         context = {"book": book, "book_rating": book_rating, "reviews": reviews}
     else:
         context = {"book": book, "book_rating": None, "reviews": None}
+    if request.user.is_authenticated:
+        max_viewed_books_length = 10
+        viewed_books = request.session.get('viewed_books', [])
+        viewed_book = [book.id, book.title]
+        if viewed_book in viewed_books:
+            viewed_books.pop(viewed_books.index(viewed_book))
+        viewed_books.insert(0, viewed_book)
+        viewed_books = viewed_books[:max_viewed_books_length]
+        request.session['viewed_books'] = viewed_books
     return render(request, "reviews/book_detail.html", context)
 
-@permission_required('edit_publisher')
+
+def is_staff_user(user):
+    return user.is_staff
+
+
+# @permission_required('edit_publisher')
+@user_passes_test(is_staff_user)
 def publisher_edit(request, pk=None):
     if pk is not None:
         publisher = get_object_or_404(Publisher, pk=pk)
