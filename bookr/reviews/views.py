@@ -1,19 +1,21 @@
 # Стандартная библиотека Python
+from io import BytesIO
 
 # Сторонние библиотеки ( включая Django и DRF)
+from PIL import Image
 from django.core.exceptions import PermissionDenied
+from django.core.files.images import ImageFile
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import (
             login_required,
-            permission_required,
             user_passes_test
 )
 from django.utils import timezone
 
 # Локальные модули проекта
 from .models import Book, Contributor, Publisher, Review
-from .forms import PublisherForm, ReviewForm, SearchForm
+from .forms import PublisherForm, ReviewForm, SearchForm, BookMediaForm
 from .utils import average_rating
 
 
@@ -52,7 +54,7 @@ def book_search(request):
 
     return render(
         request,
-        "reviews/search-results.html",
+        "reviews/search_results.html",
         {"form": form, "search_text": search_text, "books": books},
     )
 
@@ -151,7 +153,7 @@ def review_edit(request, book_pk, review_pk=None):
             raise PermissionDenied
     else:
         review = None
-    
+
     if request.method == "POST":
         form = ReviewForm(request.POST, instance=review)
         if form.is_valid():
@@ -178,4 +180,34 @@ def review_edit(request, book_pk, review_pk=None):
             'related_instance': book,
             "related_model_type": "Book",
         },
+    )
+
+
+@login_required  # 9.03.3
+def book_media(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+
+    if request.method == "POST":
+        form = BookMediaForm(request.POST, request.FILES, instance=book)
+
+        if form.is_valid():
+            book = form.save(False)
+            cover = form.cleaned_data.get("cover")
+            if cover:
+                image = Image.open(cover)
+                image.thumbnail((300, 300))
+                image_data = BytesIO()
+                image.save(fp=image_data, format=cover.image.format)
+                image_file = ImageFile(image_data)
+                book.cover.save(cover.name, image_file)
+            book.save()
+            messages.success(request, f"Book {book} was successfully updated.")
+            return redirect("book_detail", book.pk)
+    else:
+        form = BookMediaForm(instance=book)
+
+    return render(
+        request,
+        "reviews/instance_form.html",
+        {"instance": book, "form": form, "model_type": "Book", "is_file_upload": True},
     )
